@@ -14,8 +14,10 @@ class Window {
         SDL_Window* window;
         SDL_Renderer* renderer;
         SDL_Event event;
+        SDL_Rect screen;
         bool fullscreen;
         int width, height;
+        bool isPaused;
 
         // Game vars
         enum units {
@@ -31,6 +33,7 @@ class Window {
         
         Unit** units;
 
+        void unitAttack(Unit* attacker);
     public:
         static bool isRunning;
 
@@ -41,4 +44,6 @@ class Window {
         void render();
         void handleEvents();
         void kill();
+
+        void start();
 };

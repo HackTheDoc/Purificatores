@@ -10,7 +10,7 @@
 Window window;
 
 int main() {
-    const int FPS = 60;
+    const float FPS = 1;
     const int frameDelay = 1000/FPS;
 
     Uint32 frameStart;
