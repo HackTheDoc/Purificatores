@@ -64,44 +64,23 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
     currentNumberOfEntities = 0;
 
     srand(time(0));
+
+    nextDayTimer = SDL_AddTimer(500, [](Uint32 interval, void* param) {
+        Window* window = static_cast<Window*>(param);
+        window->NextDay();
+        return interval;
+    }, this);
 }
 
 void Window::update() {
-    if (isPaused) {
+    if (isPaused ) {
         return;
     }
 
-    double r;
-
-    // Dying ?
-    auto it = entities.begin();
-    while (it != entities.end()) {
-        Entity* e = *it;
-
-        r = (double)rand() / RAND_MAX;
-        if (r <= deathChance) {
-            entities.erase(it);
-            delete e;
-        } else {
-            it++;
-        }
-    }
-    
-    // Birth ?
-    r = (double)rand() / RAND_MAX;
-    if (r <= birthChance) {
-        int x = rand() % (screen.w - Entity::size);
-        int y = rand() % (screen.h - Entity::size);
-        Entity* e = new Entity(x, y, studiedSpecies);
-        entities.push_back(e);
-    }
-
-    // Movements ?
     for (auto e : entities) {
         e->update();
     }
 
-    // updating study data ?
     if (currentNumberOfEntities == static_cast<int>(entities.size())) {
         return;
     }
@@ -160,8 +139,42 @@ void Window::kill() {
         free(e);
     }
     TTF_CloseFont(font);
+    
+    SDL_RemoveTimer(nextDayTimer);
+
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
     std::cout << "Window Killed!" << std::endl;
+}
+
+void Window::NextDay() {
+    if (isPaused) {
+        return;
+    }
+
+    double r;
+
+    // Death ?
+    auto it = entities.begin();
+    while (it != entities.end()) {
+        Entity* e = *it;
+
+        r = (double)rand() / RAND_MAX;
+        if (r <= deathChance) {
+            entities.erase(it);
+            delete e;
+        } else {
+            it++;
+        }
+    }
+    
+    // Birth ?
+    r = (double)rand() / RAND_MAX;
+    if (r <= birthChance) {
+        int x = rand() % (screen.w - Entity::size);
+        int y = rand() % (screen.h - Entity::size);
+        Entity* e = new Entity(x, y, studiedSpecies);
+        entities.push_back(e);
+    }
 }

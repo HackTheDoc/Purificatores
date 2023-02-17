@@ -24,6 +24,7 @@ class Window {
         int currentNumberOfEntities;
         SDL_Texture* studyData;
         SDL_Rect studyDataRect;
+        SDL_TimerID nextDayTimer;
     
     public:
         static SDL_Renderer* renderer;
@@ -37,4 +38,5 @@ class Window {
         void render();
         void handleEvents();
         void kill();
+        void NextDay();
 };

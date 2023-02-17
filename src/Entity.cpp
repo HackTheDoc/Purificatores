@@ -6,12 +6,15 @@ int Entity::size = 32 * scale;
 
 Entity::Entity() {
     body = {0, 0, size, size};
+    destinationX = destinationY = 0;
     alive = true;
     species = 0; // None
 }
 
 Entity::Entity(int x, int y, int species) {
     body = {x, y, size, size};
+    destinationX = x;
+    destinationY = y;
     this->species = species;
     this->alive = true;
 }
@@ -19,9 +22,21 @@ Entity::Entity(int x, int y, int species) {
 Entity::~Entity() {}
 
 void Entity::update() {
-    body.x += (rand() % 3 - 1) * speed;
-    body.y += (rand() % 3 - 1) * speed;
+    double distance = sqrt( pow(destinationX - body.x, 2) + pow(destinationY - body.y, 2) );
+    
+    if (distance <= body.w || distance <= body.h) {
+        // pick a new destination
+        destinationX = rand() % (Window::screen.w - body.w);
+        destinationY = rand() % (Window::screen.h - body.h);
+        return;
+    }
+    
+    // move to the destination
+    double fraction = speed / distance;
 
+    body.x += (int)((destinationX - body.x) * fraction);
+    body.y += (int)((destinationY - body.y) * fraction);
+    
     if (body.x < 0) body.x = 0;
     if (body.x + body.w > Window::screen.w) body.x = Window::screen.w - body.w;
     if (body.y < 0) body.y = 0;

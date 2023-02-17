@@ -10,9 +10,7 @@ const int fontScale = scale;
 
 const int defaultFontSize = 16;
 
-const double birthChance = 1.0;
 
-const double deathChance = 0.1;
 
 enum Species {
     NONE,
@@ -31,3 +29,8 @@ const SDL_Color color[NUMBER_OF_SPECIES] = {
 };
 const SDL_Color textColor = {255, 0, 255, 255};
 const SDL_Color borderColor = {0, 0, 0, 255};
+
+
+const double birthChance = 0.6;
+
+const double deathChance = 0.3;
