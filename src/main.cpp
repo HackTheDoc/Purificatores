@@ -4,13 +4,13 @@
 
 #include "Window.h"
 
-#define SCREEN_WIDTH    640
-#define SCREEN_HEIGHT   640
+#define SCREEN_WIDTH    2560
+#define SCREEN_HEIGHT   1440
 
 Window window;
 
 int main() {
-    const float FPS = 1;
+    const float FPS = 60;
     const int frameDelay = 1000/FPS;
 
     Uint32 frameStart;
@@ -18,7 +18,7 @@ int main() {
     
     window.init(
         "PURIFICATORES",
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        0, 0,                           // place window at top left corner of the screen
         SCREEN_WIDTH, SCREEN_HEIGHT,
         false
     );

@@ -1,5 +1,9 @@
 # Purificatores
 
-The concept is just a Game of life with colored squares try to conquere the map.
+Welcome to this first trial in artificial life !
 
-Currently in development...
+I sware the gods, i am so excited by this !!!
+
+I'll add more informations once i have a nice base, so just keep following.
+
+**Warning :** currently in development...

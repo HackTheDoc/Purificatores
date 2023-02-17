@@ -2,39 +2,25 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <vector>
-#include "Unit.h"
 
 class Window {
     private:
         const int scale = 4;
-        const int caseSize = 16;
+        const int fontScale = scale * 2;
+        const int defaultFontSize = 16;
 
         // Window vars
         SDL_Window* window;
-        SDL_Renderer* renderer;
         SDL_Event event;
-        SDL_Rect screen;
+        TTF_Font* font;
+        SDL_Texture* pauseMessage;
+        SDL_Rect pauseMessageRect;
         bool fullscreen;
-        int width, height;
         bool isPaused;
 
-        // Game vars
-        enum units {
-            WHITE,
-            PURPLE,
-            PINK,
-            RED,
-            GREEN,
-            BLUE,
-            NUMBER_OF_UNITS
-        };
-        SDL_Color color[NUMBER_OF_UNITS];
-        
-        Unit** units;
-
-        void unitAttack(Unit* attacker);
     public:
+        static SDL_Renderer* renderer;
+        static SDL_Rect screen;
         static bool isRunning;
 
         Window();
@@ -44,6 +30,4 @@ class Window {
         void render();
         void handleEvents();
         void kill();
-
-        void start();
 };
