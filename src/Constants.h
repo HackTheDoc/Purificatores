@@ -1,11 +1,12 @@
 #pragma once
 #include <iostream>
 #include <map>
+#include <string>
 #include <SDL2/SDL.h>
 
 const int scale = 4;
 
-const int fontScale = scale * 2;
+const int fontScale = scale;
 
 const int defaultFontSize = 16;
 
@@ -19,7 +20,7 @@ enum Species {
     NUMBER_OF_SPECIES
 };
 
-const std::map<Species, const char*> speciesName = {
+const std::map<Species, std::string> speciesName = {
     {NONE, "None"},
     {SPECIES_1, "Species_1"}
 };

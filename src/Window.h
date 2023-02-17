@@ -13,14 +13,18 @@ class Window {
         SDL_Window* window;
         SDL_Event event;
         TTF_Font* font;
+        bool fullscreen;
+
         SDL_Texture* pauseMessage;
         SDL_Rect pauseMessageRect;
-        bool fullscreen;
         bool isPaused;
 
         std::vector<Entity*> entities;
         Species studiedSpecies;
-
+        int currentNumberOfEntities;
+        SDL_Texture* studyData;
+        SDL_Rect studyDataRect;
+    
     public:
         static SDL_Renderer* renderer;
         static SDL_Rect screen;

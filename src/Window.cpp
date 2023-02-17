@@ -37,9 +37,10 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
     }
     font = TTF_OpenFont("assets/oxanium.ttf", defaultFontSize * fontScale);
 
+    TTF_Font* tempFont = TTF_OpenFont("assets/oxanium.ttf", defaultFontSize * fontScale * 2);
     SDL_Surface* tmpSurface;
     tmpSurface = TTF_RenderText_Blended_Wrapped(
-        Window::font,
+        tempFont,
         "PRESS ENTER TO PLAY",
         textColor,
         screen.w
@@ -52,6 +53,7 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
         tmpSurface->h
     };
     SDL_FreeSurface(tmpSurface);
+    TTF_CloseFont(tempFont);
 
     screen.w = width;
     screen.h = height;
@@ -59,6 +61,7 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
     isPaused = true;
 
     studiedSpecies = SPECIES_1;
+    currentNumberOfEntities = 0;
 
     srand(time(0));
 }
@@ -97,6 +100,19 @@ void Window::update() {
     for (auto e : entities) {
         e->update();
     }
+
+    // updating study data ?
+    if (currentNumberOfEntities == static_cast<int>(entities.size())) {
+        return;
+    }
+    currentNumberOfEntities = static_cast<int>(entities.size());
+    std::string text = speciesName.at(studiedSpecies) + " : " + std::to_string(currentNumberOfEntities);
+
+    SDL_Surface* tmpSurface;
+    tmpSurface = TTF_RenderText_Blended(Window::font, text.c_str(), textColor);
+    studyData = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
+    studyDataRect = {0, 16, tmpSurface->w, tmpSurface->h};
+    SDL_FreeSurface(tmpSurface);
 }
 
 void Window::render() {
@@ -107,11 +123,13 @@ void Window::render() {
     }
 
     SDL_RenderClear(renderer);
-    
+
     for (auto e : entities) {
         e->draw();
     }
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    SDL_RenderCopy(renderer, studyData, nullptr, &studyDataRect);
 
     SDL_RenderPresent(renderer);
 }
@@ -141,6 +159,7 @@ void Window::kill() {
     for (auto e : entities) {
         free(e);
     }
+    TTF_CloseFont(font);
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
