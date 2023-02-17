@@ -22,11 +22,17 @@ int main() {
         SCREEN_WIDTH, SCREEN_HEIGHT,
         false
     );
+
+    SDL_TimerID updateTimer = SDL_AddTimer(500, [](Uint32 interval, void* param) {
+        Window* window = static_cast<Window*>(param);
+        window->update();
+        return interval;
+    }, &window);
+
     while(Window::isRunning) {
         frameStart = SDL_GetTicks();
 
         window.handleEvents();
-        window.update();
         window.render();
 
         frameTime = SDL_GetTicks() - frameStart;
@@ -35,6 +41,9 @@ int main() {
             SDL_Delay(frameDelay - frameTime);
         }
     }
+
+    SDL_RemoveTimer(updateTimer);
+
     window.kill();
 
     return 0;

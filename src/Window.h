@@ -2,13 +2,13 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <vector>
+
+#include "Constants.h"
+#include "Entity.h"
 
 class Window {
     private:
-        const int scale = 4;
-        const int fontScale = scale * 2;
-        const int defaultFontSize = 16;
-
         // Window vars
         SDL_Window* window;
         SDL_Event event;
@@ -17,6 +17,9 @@ class Window {
         SDL_Rect pauseMessageRect;
         bool fullscreen;
         bool isPaused;
+
+        std::vector<Entity*> entities;
+        Species studiedSpecies;
 
     public:
         static SDL_Renderer* renderer;

@@ -1,4 +1,7 @@
 #include "Window.h"
+#include <cstdlib>
+#include <ctime>
+
 
 SDL_Renderer* Window::renderer = nullptr;
 SDL_Rect Window::screen = {0, 0, 0, 0};
@@ -24,6 +27,7 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
         if (renderer) {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderClear(renderer);
             std::cout << "Renderer created!" << std::endl;
         }
         isRunning = true;
@@ -37,8 +41,8 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
     tmpSurface = TTF_RenderText_Blended_Wrapped(
         Window::font,
         "PRESS ENTER TO PLAY",
-        {0, 0, 0, 255},
-        screen.w * 0.875
+        textColor,
+        screen.w
     );
     pauseMessage = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
     pauseMessageRect = {
@@ -53,6 +57,10 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
     screen.h = height;
 
     isPaused = true;
+
+    studiedSpecies = SPECIES_1;
+
+    srand(time(0));
 }
 
 void Window::update() {
@@ -60,18 +68,51 @@ void Window::update() {
         return;
     }
 
-    // coming soon...
+    double r;
+
+    // Dying ?
+    auto it = entities.begin();
+    while (it != entities.end()) {
+        Entity* e = *it;
+
+        r = (double)rand() / RAND_MAX;
+        if (r <= deathChance) {
+            entities.erase(it);
+            delete e;
+        } else {
+            it++;
+        }
+    }
+    
+    // Birth ?
+    r = (double)rand() / RAND_MAX;
+    if (r <= birthChance) {
+        int x = rand() % (screen.w - Entity::size);
+        int y = rand() % (screen.h - Entity::size);
+        Entity* e = new Entity(x, y, studiedSpecies);
+        entities.push_back(e);
+    }
+
+    // Movements ?
+    for (auto e : entities) {
+        e->update();
+    }
 }
 
 void Window::render() {
-    SDL_RenderClear(renderer);
-    
     if (isPaused) {
         SDL_RenderCopy(renderer, pauseMessage, nullptr, &pauseMessageRect);
         SDL_RenderPresent(renderer);
         return;
     }
+
+    SDL_RenderClear(renderer);
     
+    for (auto e : entities) {
+        e->draw();
+    }
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -97,6 +138,9 @@ void Window::handleEvents() {
 }
 
 void Window::kill() {
+    for (auto e : entities) {
+        free(e);
+    }
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
