@@ -19,7 +19,13 @@ Entity::Entity(int x, int y, int species) {
 Entity::~Entity() {}
 
 void Entity::update() {
+    body.x += (rand() % 3 - 1) * speed;
+    body.y += (rand() % 3 - 1) * speed;
 
+    if (body.x < 0) body.x = 0;
+    if (body.x + body.w > Window::screen.w) body.x = Window::screen.w - body.w;
+    if (body.y < 0) body.y = 0;
+    if (body.y + body.h > Window::screen.h) body.y = Window::screen.h - body.h;
 }
 
 void Entity::draw() {
