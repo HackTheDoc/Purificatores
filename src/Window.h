@@ -22,10 +22,20 @@ class Window {
         std::vector<Entity*> entities;
         Species studiedSpecies;
         int currentNumberOfEntities;
-        SDL_Texture* studyData;
-        SDL_Rect studyDataRect;
         SDL_TimerID nextDayTimer;
-    
+
+        SDL_Texture* birthRateText;
+        SDL_Rect birthRateRect;
+
+        SDL_Texture* deathRateText;
+        SDL_Rect deathRateRect;
+
+        SDL_Texture* expectationText;
+        SDL_Rect expectationRect;
+
+        SDL_Texture* numberOfLivingsText;
+        SDL_Rect numberOfLivingsRect;
+
     public:
         static SDL_Renderer* renderer;
         static SDL_Rect screen;

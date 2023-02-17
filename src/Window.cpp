@@ -37,6 +37,7 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
     }
     font = TTF_OpenFont("assets/oxanium.ttf", defaultFontSize * fontScale);
 
+    // Pause Message
     TTF_Font* tempFont = TTF_OpenFont("assets/oxanium.ttf", defaultFontSize * fontScale * 2);
     SDL_Surface* tmpSurface;
     tmpSurface = TTF_RenderText_Blended_Wrapped(
@@ -62,6 +63,52 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
 
     studiedSpecies = SPECIES_1;
     currentNumberOfEntities = 0;
+
+    // Birth Rate
+    tmpSurface = TTF_RenderText_Blended_Wrapped(
+        font,
+        ("Birth Rate : " + std::to_string(birthRate)).c_str(),
+        textColor,
+        screen.w
+    );
+    birthRateText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
+    birthRateRect = {
+        screen.w - tmpSurface->w - 16,
+        16,
+        tmpSurface->w,
+        tmpSurface->h
+    };
+    SDL_FreeSurface(tmpSurface);
+
+    // Death Rate
+    tmpSurface = TTF_RenderText_Blended(
+        font,
+        ("Death Rate : " + std::to_string(deathRate)).c_str(),
+        textColor
+    );
+    deathRateText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
+    deathRateRect = {
+        screen.w - tmpSurface->w - 16,
+        birthRateRect.y + birthRateRect.h + 16,
+        tmpSurface->w,
+        tmpSurface->h
+    };
+    SDL_FreeSurface(tmpSurface);
+
+    // Death Rate
+    tmpSurface = TTF_RenderText_Blended(
+        font,
+        ("Expecting " + std::to_string(birthRate/deathRate) + " entities").c_str(),
+        textColor
+    );
+    expectationText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
+    expectationRect = {
+        screen.w - tmpSurface->w - 16,
+        screen.h - tmpSurface->h - 32,
+        tmpSurface->w,
+        tmpSurface->h
+    };
+    SDL_FreeSurface(tmpSurface);
 
     srand(time(0));
 
@@ -89,8 +136,8 @@ void Window::update() {
 
     SDL_Surface* tmpSurface;
     tmpSurface = TTF_RenderText_Blended(Window::font, text.c_str(), textColor);
-    studyData = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
-    studyDataRect = {0, 16, tmpSurface->w, tmpSurface->h};
+    numberOfLivingsText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
+    numberOfLivingsRect = {0, 16, tmpSurface->w, tmpSurface->h};
     SDL_FreeSurface(tmpSurface);
 }
 
@@ -108,7 +155,10 @@ void Window::render() {
     }
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    SDL_RenderCopy(renderer, studyData, nullptr, &studyDataRect);
+    SDL_RenderCopy(renderer, numberOfLivingsText, nullptr, &numberOfLivingsRect);
+    SDL_RenderCopy(renderer, birthRateText, nullptr, &birthRateRect);
+    SDL_RenderCopy(renderer, deathRateText, nullptr, &deathRateRect);
+    SDL_RenderCopy(renderer, expectationText, nullptr, &expectationRect);
 
     SDL_RenderPresent(renderer);
 }
@@ -142,6 +192,10 @@ void Window::kill() {
     
     SDL_RemoveTimer(nextDayTimer);
 
+    SDL_DestroyTexture(numberOfLivingsText);
+    SDL_DestroyTexture(birthRateText);
+    SDL_DestroyTexture(deathRateText);
+
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
@@ -161,7 +215,7 @@ void Window::NextDay() {
         Entity* e = *it;
 
         r = (double)rand() / RAND_MAX;
-        if (r <= deathChance) {
+        if (r <= deathRate) {
             entities.erase(it);
             delete e;
         } else {
@@ -171,7 +225,7 @@ void Window::NextDay() {
     
     // Birth ?
     r = (double)rand() / RAND_MAX;
-    if (r <= birthChance) {
+    if (r <= birthRate) {
         int x = rand() % (screen.w - Entity::size);
         int y = rand() % (screen.h - Entity::size);
         Entity* e = new Entity(x, y, studiedSpecies);

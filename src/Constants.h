@@ -31,6 +31,6 @@ const SDL_Color textColor = {255, 0, 255, 255};
 const SDL_Color borderColor = {0, 0, 0, 255};
 
 
-const double birthChance = 0.6;
+const double birthRate = 0.8;
 
-const double deathChance = 0.3;
+const double deathRate = 0.03;
