@@ -33,6 +33,10 @@ const SDL_Color textColor = {255, 0, 255, 255};
 const SDL_Color borderColor = {0, 0, 0, 255};
 
 
-const double birthRate = 0.4;
+const double birthRate = 0;
 
-const double deathRate = 0.004;
+const double reproducingChance = 0.05;
+
+const double deathRate = 0.02;
+
+const int startingPopulation = 250;

@@ -4,11 +4,16 @@
 
 int Entity::size = 32 * scale;
 
+double getDistance(int x1, int y1, int x2, int y2) {
+    return sqrt( pow(x1 - x2, 2) + pow(y1 - y2, 2) );
+}
+
 Entity::Entity() {
     body = {0, 0, size, size};
     destinationX = destinationY = 0;
     alive = true;
     species = 0; // None
+    reproducing = 0;
 }
 
 Entity::Entity(int x, int y, int species) {
@@ -17,12 +22,13 @@ Entity::Entity(int x, int y, int species) {
     destinationY = y;
     this->species = species;
     this->alive = true;
+    reproducing = 0;
 }
 
 Entity::~Entity() {}
 
 void Entity::update() {
-    double distance = sqrt( pow(destinationX - body.x, 2) + pow(destinationY - body.y, 2) );
+    double distance = getDistance(destinationX, destinationY, body.x, body.y);
     
     if (distance <= body.w/2 || distance <= body.h/2) {
         // pick a new destination
@@ -55,4 +61,28 @@ void Entity::draw() {
     // border
     SDL_SetRenderDrawColor(Window::renderer, borderColor.r, borderColor.g, borderColor.b, borderColor.a);
     SDL_RenderDrawRect(Window::renderer, &body);
+}
+
+void Entity::reproduce() {
+    if (reproducing) {
+        reproducing--;
+    }
+
+    for (auto partner : Window::entities) {
+        double d = getDistance(body.x, body.y, partner->body.x, partner->body.y);
+        
+        if (d > size * 1.5 || d == 0) {
+            reproducing--;
+            return;
+        }
+
+        partner->reproducing = 2;
+        this->reproducing = 2;
+
+        // did they fucked ?
+        double r = (double)rand() / RAND_MAX;
+        if (r <= reproducingChance) {
+            Window::AddEntity();
+        }
+    }
 }

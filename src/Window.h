@@ -19,28 +19,15 @@ class Window {
         SDL_Rect pauseMessageRect;
         bool isPaused;
 
-        std::vector<Entity*> entities;
-        Species studiedSpecies;
         int currentNumberOfEntities;
         SDL_TimerID nextDayTimer;
-
-        SDL_Texture* birthRateText;
-        SDL_Rect birthRateRect;
-
-        SDL_Texture* deathRateText;
-        SDL_Rect deathRateRect;
-
-        SDL_Texture* expectationText;
-        SDL_Rect expectationRect;
 
         SDL_Texture* numberOfLivingsText;
         SDL_Rect numberOfLivingsRect;
 
-    public:
-        static SDL_Renderer* renderer;
-        static SDL_Rect screen;
-        static bool isRunning;
+        void UpdateEntitiesCounter();
 
+    public:
         Window();
         ~Window();
         void init(const char* title, int x, int y, int width, int height, bool fullscreen);
@@ -49,4 +36,12 @@ class Window {
         void handleEvents();
         void kill();
         void NextDay();
+
+        static void AddEntity();
+
+        static SDL_Renderer* renderer;
+        static SDL_Rect screen;
+        static bool isRunning;
+        static std::vector<Entity*> entities;
+        static Species studiedSpecies;
 };

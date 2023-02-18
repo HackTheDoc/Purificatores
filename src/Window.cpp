@@ -6,6 +6,8 @@
 SDL_Renderer* Window::renderer = nullptr;
 SDL_Rect Window::screen = {0, 0, 0, 0};
 bool Window::isRunning = false;
+std::vector<Entity*> Window::entities = {};
+Species Window::studiedSpecies = SPECIES_1;
 
 Window::Window() {}
 
@@ -61,55 +63,16 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
 
     isPaused = true;
 
-    studiedSpecies = SPECIES_1;
-    currentNumberOfEntities = 0;
+    // Print params
+    std::cout << "Birth Rate (spontaneous)  : " << birthRate << std::endl;
+    std::cout << "Reproducing Chance        : " << reproducingChance << std::endl;
+    std::cout << "Death Chance              : " << deathRate << std::endl;
 
-    // Birth Rate
-    tmpSurface = TTF_RenderText_Blended_Wrapped(
-        font,
-        ("Birth Rate : " + std::to_string(birthRate)).c_str(),
-        textColor,
-        screen.w
-    );
-    birthRateText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
-    birthRateRect = {
-        screen.w - tmpSurface->w - 16,
-        16,
-        tmpSurface->w,
-        tmpSurface->h
-    };
-    SDL_FreeSurface(tmpSurface);
+    // Study configuration
+    currentNumberOfEntities = startingPopulation;
+    for (int i = 0; i < currentNumberOfEntities; i++) AddEntity();
 
-    // Death Rate
-    tmpSurface = TTF_RenderText_Blended(
-        font,
-        ("Death Rate : " + std::to_string(deathRate)).c_str(),
-        textColor
-    );
-    deathRateText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
-    deathRateRect = {
-        screen.w - tmpSurface->w - 16,
-        birthRateRect.y + birthRateRect.h + 16,
-        tmpSurface->w,
-        tmpSurface->h
-    };
-    SDL_FreeSurface(tmpSurface);
-
-    // Death Rate
-    tmpSurface = TTF_RenderText_Blended(
-        font,
-        ("Expecting " + std::to_string(birthRate/deathRate) + " entities").c_str(),
-        textColor
-    );
-    expectationText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
-    expectationRect = {
-        screen.w - tmpSurface->w - 16,
-        screen.h - tmpSurface->h - 32,
-        tmpSurface->w,
-        tmpSurface->h
-    };
-    SDL_FreeSurface(tmpSurface);
-
+    // Days to days
     srand(time(0));
 
     nextDayTimer = SDL_AddTimer(500, [](Uint32 interval, void* param) {
@@ -120,25 +83,17 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
 }
 
 void Window::update() {
-    if (isPaused ) {
+    if (isPaused || entities.size() <= 0) {
+        UpdateEntitiesCounter();
         return;
     }
 
     for (auto e : entities) {
         e->update();
+        e->reproduce();
     }
 
-    if (currentNumberOfEntities == static_cast<int>(entities.size())) {
-        return;
-    }
-    currentNumberOfEntities = static_cast<int>(entities.size());
-    std::string text = speciesName.at(studiedSpecies) + " : " + std::to_string(currentNumberOfEntities);
-
-    SDL_Surface* tmpSurface;
-    tmpSurface = TTF_RenderText_Blended(Window::font, text.c_str(), textColor);
-    numberOfLivingsText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
-    numberOfLivingsRect = {0, 16, tmpSurface->w, tmpSurface->h};
-    SDL_FreeSurface(tmpSurface);
+    UpdateEntitiesCounter();
 }
 
 void Window::render() {
@@ -156,9 +111,6 @@ void Window::render() {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     SDL_RenderCopy(renderer, numberOfLivingsText, nullptr, &numberOfLivingsRect);
-    SDL_RenderCopy(renderer, birthRateText, nullptr, &birthRateRect);
-    SDL_RenderCopy(renderer, deathRateText, nullptr, &deathRateRect);
-    SDL_RenderCopy(renderer, expectationText, nullptr, &expectationRect);
 
     SDL_RenderPresent(renderer);
 }
@@ -192,9 +144,8 @@ void Window::kill() {
     
     SDL_RemoveTimer(nextDayTimer);
 
+    std::cout << "Final number of living entities : " << currentNumberOfEntities << std::endl;
     SDL_DestroyTexture(numberOfLivingsText);
-    SDL_DestroyTexture(birthRateText);
-    SDL_DestroyTexture(deathRateText);
 
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
@@ -226,9 +177,27 @@ void Window::NextDay() {
     // Birth ?
     r = (double)rand() / RAND_MAX;
     if (r <= birthRate) {
-        int x = rand() % (screen.w - Entity::size);
-        int y = rand() % (screen.h - Entity::size);
-        Entity* e = new Entity(x, y, studiedSpecies);
-        entities.push_back(e);
+        AddEntity();
     }
+}
+
+void Window::AddEntity() {
+    int x = rand() % (screen.w - Entity::size);
+    int y = rand() % (screen.h - Entity::size);
+    Entity* e = new Entity(x, y, studiedSpecies);
+    entities.push_back(e);
+}
+
+void Window::UpdateEntitiesCounter() {
+    if (currentNumberOfEntities == static_cast<int>(entities.size())) {
+        return;
+    }
+    currentNumberOfEntities = static_cast<int>(entities.size());
+    std::string text = speciesName.at(studiedSpecies) + " : " + std::to_string(currentNumberOfEntities);
+
+    SDL_Surface* tmpSurface;
+    tmpSurface = TTF_RenderText_Blended(Window::font, text.c_str(), textColor);
+    numberOfLivingsText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
+    numberOfLivingsRect = {0, 16, tmpSurface->w, tmpSurface->h};
+    SDL_FreeSurface(tmpSurface);
 }
