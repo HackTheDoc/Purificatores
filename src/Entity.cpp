@@ -24,10 +24,15 @@ Entity::~Entity() {}
 void Entity::update() {
     double distance = sqrt( pow(destinationX - body.x, 2) + pow(destinationY - body.y, 2) );
     
-    if (distance <= body.w || distance <= body.h) {
+    if (distance <= body.w/2 || distance <= body.h/2) {
         // pick a new destination
-        destinationX = rand() % (Window::screen.w - body.w);
-        destinationY = rand() % (Window::screen.h - body.h);
+        do {
+            destinationX = body.x + ( rand() % (body.w * 3) ) * ( rand() % 3 - 1 );
+            destinationY = body.y + ( rand() % (body.h * 3) ) * ( rand() % 3 - 1 );
+        } while (
+            destinationX < 0 || destinationX > Window::screen.w - body.w ||
+            destinationY < 0 || destinationY > Window::screen.h - body.h
+        );
         return;
     }
     

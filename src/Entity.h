@@ -3,7 +3,7 @@
 
 class Entity {
     private:
-    static const int speed = 5;
+    static const int speed = 4;
 
     SDL_Rect body;
     bool alive;

@@ -4,13 +4,15 @@
 #include <string>
 #include <SDL2/SDL.h>
 
+// Window relatives vars
+
 const int scale = 4;
 
 const int fontScale = scale;
 
 const int defaultFontSize = 16;
 
-
+// Study relatives vars
 
 enum Species {
     NONE,
@@ -20,7 +22,7 @@ enum Species {
 
 const std::map<Species, std::string> speciesName = {
     {NONE, "None"},
-    {SPECIES_1, "Species_1"}
+    {SPECIES_1, "Purificatore"}
 };
 
 const SDL_Color color[NUMBER_OF_SPECIES] = {
@@ -31,6 +33,6 @@ const SDL_Color textColor = {255, 0, 255, 255};
 const SDL_Color borderColor = {0, 0, 0, 255};
 
 
-const double birthRate = 0.8;
+const double birthRate = 0.4;
 
-const double deathRate = 0.03;
+const double deathRate = 0.004;
