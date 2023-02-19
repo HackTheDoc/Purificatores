@@ -71,19 +71,18 @@ void Entity::reproduce() {
 
     for (auto partner : Window::entities) {
         double d = getDistance(body.x, body.y, partner->body.x, partner->body.y);
-        
-        if (d > size * 1.5 || this == partner) {
+        if (this == partner || d > size * 1.5) {
             reproducing--;
-            return;
         }
+        else {
+            partner->reproducing = 2;
+            this->reproducing = 2;
 
-        partner->reproducing = 2;
-        this->reproducing = 2;
-
-        // did they fucked ?
-        double r = (double)rand() / RAND_MAX;
-        if (r <= reproducingChance) {
-            Window::AddEntity();
+            // did they fucked ?
+            double r = (double)rand() / RAND_MAX;
+            if (r <= reproducingChance) {
+                Window::AddEntity();
+            }
         }
     }
 }

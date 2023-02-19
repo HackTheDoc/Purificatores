@@ -35,7 +35,7 @@ const SDL_Color borderColor = {0, 0, 0, 255};
 
 const double birthRate = 0;
 
-const double reproducingChance = 0.5;
+const double reproducingChance = 0.05;
 
 const double deathRate = 0.02;
 

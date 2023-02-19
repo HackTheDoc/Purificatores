@@ -98,11 +98,12 @@ void Window::update() {
         UpdateEntitiesCounter();
         return;
     }
-
+    std::cout << "window : ";
     for (auto e : entities) {
         e->update();
         e->reproduce();
     }
+    std::cout << "updated!" << std::endl;
 
     UpdateEntitiesCounter();
 }
@@ -213,6 +214,8 @@ void Window::UpdateEntitiesCounter() {
     numberOfLivingsText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
     numberOfLivingsRect = {0, 16, tmpSurface->w, tmpSurface->h};
     SDL_FreeSurface(tmpSurface);
+
+    std::cout << currentNumberOfEntities << std::endl;
 }
 
 void Window::ClearEntities() {
