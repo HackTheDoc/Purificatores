@@ -26,11 +26,13 @@ class Window {
         SDL_Rect numberOfLivingsRect;
 
         void UpdateEntitiesCounter();
+        void ClearEntities();
 
     public:
         Window();
         ~Window();
         void init(const char* title, int x, int y, int width, int height, bool fullscreen);
+        void startSimulation();
         void update();
         void render();
         void handleEvents();

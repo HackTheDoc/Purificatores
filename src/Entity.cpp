@@ -66,12 +66,13 @@ void Entity::draw() {
 void Entity::reproduce() {
     if (reproducing) {
         reproducing--;
+        return;
     }
 
     for (auto partner : Window::entities) {
         double d = getDistance(body.x, body.y, partner->body.x, partner->body.y);
         
-        if (d > size * 1.5 || d == 0) {
+        if (d > size * 1.5 || this == partner) {
             reproducing--;
             return;
         }

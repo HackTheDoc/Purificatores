@@ -63,6 +63,17 @@ void Window::init(const char* title, int x, int y, int width, int height, bool f
 
     isPaused = true;
 
+    startSimulation();
+}
+
+void Window::startSimulation() {
+    SDL_RemoveTimer(nextDayTimer);
+    
+    ClearEntities();
+    
+
+    std::cout << "----- Starting Stimulation -----" << std::endl;
+
     // Print params
     std::cout << "Birth Rate (spontaneous)  : " << birthRate << std::endl;
     std::cout << "Reproducing Chance        : " << reproducingChance << std::endl;
@@ -126,6 +137,9 @@ void Window::handleEvents() {
             if (event.key.keysym.sym == SDLK_q) {
                 isRunning = false;
             }
+            if (event.key.keysym.sym == SDLK_r) {
+                startSimulation();
+            }
             if (event.key.keysym.sym == SDLK_p || event.key.keysym.sym == SDLK_RETURN) {
                 isPaused = !isPaused;
             }
@@ -137,9 +151,8 @@ void Window::handleEvents() {
 }
 
 void Window::kill() {
-    for (auto e : entities) {
-        free(e);
-    }
+    ClearEntities();
+
     TTF_CloseFont(font);
     
     SDL_RemoveTimer(nextDayTimer);
@@ -200,4 +213,11 @@ void Window::UpdateEntitiesCounter() {
     numberOfLivingsText = SDL_CreateTextureFromSurface(Window::renderer, tmpSurface);
     numberOfLivingsRect = {0, 16, tmpSurface->w, tmpSurface->h};
     SDL_FreeSurface(tmpSurface);
+}
+
+void Window::ClearEntities() {
+    for (auto e : entities) {
+        free(e);
+    }
+    entities.clear();
 }
