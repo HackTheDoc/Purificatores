@@ -90,7 +90,14 @@ void Simulation::start() {
     // Days to days
     srand(time(0));
     
-    day = 0;
+    day = 1;
+    
+    SDL_Surface* tmpSurface;
+    tmpSurface = TTF_RenderText_Blended(font, "Day 1", textColor);
+    dayCounterText = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    dayCounterRect = {screen.w - tmpSurface->w - 16, 16, tmpSurface->w, tmpSurface->h};
+    SDL_FreeSurface(tmpSurface);
+
     nextDayTimer = SDL_AddTimer(1000*10, [](Uint32 interval, void* param) {
         Simulation* window = static_cast<Simulation*>(param);
         window->NextDay();
@@ -137,6 +144,7 @@ void Simulation::render() {
 
     SDL_RenderCopy(renderer, numberOfEntitiesText, nullptr, &numberOfEntitiesRect);
     SDL_RenderCopy(renderer, numberOfFoodSourcesText, nullptr, &numberOfFoodSourcesRect);
+    SDL_RenderCopy(renderer, dayCounterText, nullptr, &dayCounterRect);
 
     SDL_RenderPresent(renderer);
 }
@@ -175,6 +183,7 @@ void Simulation::kill() {
 
     SDL_DestroyTexture(numberOfEntitiesText);
     SDL_DestroyTexture(numberOfFoodSourcesText);
+    SDL_DestroyTexture(dayCounterText);
 
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
@@ -218,7 +227,14 @@ void Simulation::NextDay() {
     }
 
     // ----- START OF THE NEW DAY -----
+    // update day counter
     day++;
+    std::string text = "Day " + std::to_string(day);
+    SDL_Surface* tmpSurface;
+    tmpSurface = TTF_RenderText_Blended(font, text.c_str(), textColor);
+    dayCounterText = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+    dayCounterRect = {screen.w - tmpSurface->w - 16, 16, tmpSurface->w, tmpSurface->h};
+    SDL_FreeSurface(tmpSurface);
 
     // spawn new food source relatively to current day
     int amount = startingFoodSources * pow(foodSourcesRarificationRate, day);

@@ -29,6 +29,8 @@ private:
     SDL_Rect numberOfFoodSourcesRect;
 
     int day;
+    SDL_Texture* dayCounterText;
+    SDL_Rect dayCounterRect;
     SDL_TimerID nextDayTimer;
 
     void UpdateEntitiesCounter();
