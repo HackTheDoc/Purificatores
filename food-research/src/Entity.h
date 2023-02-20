@@ -5,6 +5,7 @@
 class Entity {
 protected:
     int speed;
+    int hungerRisingRate;
 
     int destinationX, destinationY;
     Food* targetedFood;
@@ -21,7 +22,7 @@ public:
     ~Entity();
     void update();
     void draw();
+    void moveTowardsDestination();
     void findNearestFoodSource();
     void eat();
-    void starve();
 };

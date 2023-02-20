@@ -6,37 +6,27 @@
 int Entity::size = entityDefaultSize * scale;
 
 double distance(int x1, int y1, int x2, int y2) {
-    return sqrt( pow(x1 - x2, 2) + pow(y1 - y2, 2) );
+    return sqrt( pow(x2 - x1, 2) + pow(y2 - y1, 2) );
 }
 
 Entity::Entity(int x, int y) {
     body = {x, y, size, size};
     color = &entityColor;
     alive = true;
-    hunger = 0;
+    hunger = 10;
     targetedFood = nullptr;
     speed = 1;
+    hungerRisingRate = 1;
 }
 
 Entity::~Entity() {}
 
 void Entity::update() {
-    double dist = distance(destinationX, destinationY, body.x, body.y);
+    moveTowardsDestination();
     
-    if (dist <= size/2) {
-        return;
+    if (hunger > 20000) {   // 1000*10*4, entity die if he doesn't eat for 2 days
+        alive = false;
     }
-    
-    // move to the destination
-    double fraction = speed / dist;
-
-    body.x += (int)((destinationX - body.x) * fraction);
-    body.y += (int)((destinationY - body.y) * fraction);
-    
-    if (body.x < 0) body.x = 0;
-    if (body.x + body.w > Simulation::screen.w) body.x = Simulation::screen.w - body.w;
-    if (body.y < 0) body.y = 0;
-    if (body.y + body.h > Simulation::screen.h) body.y = Simulation::screen.h - body.h;
 }
 
 void Entity::draw() {
@@ -61,12 +51,13 @@ void Entity::findNearestFoodSource() {
     }
 
     // set destination depending of targeted food
-    if (hunger && targetedFood != nullptr) {
+    if (targetedFood != nullptr) {
         destinationX = targetedFood->x;
         destinationY = targetedFood->y;
     } else {
         destinationX = body.x;
         destinationY = body.y;
+        targetedFood = nullptr;
     }
 }
 
@@ -75,27 +66,46 @@ void Entity::eat() {
         return;
     }
 
-    double dist = distance(destinationX, destinationY, body.x, body.y);
     auto it = std::find(Simulation::foodSources.begin(), Simulation::foodSources.end(), targetedFood);
     if (it != Simulation::foodSources.end()) {
+        double dist = distance(destinationX, destinationY, body.x, body.y);
         if (dist <= size/2) {
             // let's eat !
-            hunger -= 25;
+            hunger -= 2000;
             if (hunger < 0) hunger = 0;
 
             // and remove the eaten food source of the map xD
             Simulation::foodSources.erase(it);
             delete targetedFood;
             targetedFood = nullptr;
+
+            if (hunger) {
+                findNearestFoodSource();
+            }
         }
     } else {
         findNearestFoodSource();
     }
 }
 
-void Entity::starve() {
-    hunger += 25;
-    if (hunger > 100) {
-        alive = false;
+void Entity::moveTowardsDestination() {
+    double dist = distance(destinationX, destinationY, body.x, body.y);
+    
+    if (dist <= size/2) {
+        return;
     }
+    
+    // move to the destination
+    double fraction = speed / dist;
+
+    body.x += (int)((destinationX - body.x) * fraction);
+    body.y += (int)((destinationY - body.y) * fraction);
+    
+    if (body.x < 0) body.x = 0;
+    if (body.x + body.w > Simulation::screen.w) body.x = Simulation::screen.w - body.w;
+    if (body.y < 0) body.y = 0;
+    if (body.y + body.h > Simulation::screen.h) body.y = Simulation::screen.h - body.h;
+
+    // when moving, the entity hunger rise up
+    hunger += hungerRisingRate;
 }

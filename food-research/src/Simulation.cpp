@@ -83,7 +83,6 @@ void Simulation::start() {
     for (int i = 0; i < currentNumberOfFoodSources; i++) AddFoodSource();
 
     for (auto e : entities) {
-        e->starve();
         e->findNearestFoodSource();
     }
 
@@ -120,6 +119,19 @@ void Simulation::update() {
 
     for (auto f : foodSources) {
         f->update();
+    }
+
+    // Dead entities ?
+    auto itEntity = entities.begin();
+    while (itEntity != entities.end()) {
+        Entity* e = *itEntity;
+
+        if (e->alive) {
+            itEntity++;
+        } else {
+            entities.erase(itEntity);
+            delete e;
+        }
     }
 
     UpdateCounters();
@@ -199,20 +211,6 @@ void Simulation::NextDay() {
     }
 
     // ----- END OF THE DAY -----
-    // Dead entities ?
-    auto itEntity = entities.begin();
-    while (itEntity != entities.end()) {
-        Entity* e = *itEntity;
-        e->starve();
-
-        if (e->alive) {
-            itEntity++;
-        } else {
-            entities.erase(itEntity);
-            delete e;
-        }
-    }
-
     // Expiring food sources
     auto itFood = foodSources.begin();
     while (itFood != foodSources.end()) {
