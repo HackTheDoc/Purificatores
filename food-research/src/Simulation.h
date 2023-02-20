@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Constants.h"
-#include "Entity.h"
+#include "Entities.h"
 #include "Food.h"
 
 class Simulation {

@@ -11,9 +11,11 @@ double distance(int x1, int y1, int x2, int y2) {
 
 Entity::Entity(int x, int y) {
     body = {x, y, size, size};
+    color = &entityColor;
     alive = true;
     hunger = 0;
     targetedFood = nullptr;
+    speed = 1;
 }
 
 Entity::~Entity() {}
@@ -39,7 +41,7 @@ void Entity::update() {
 
 void Entity::draw() {
     // content
-    SDL_SetRenderDrawColor(Simulation::renderer, entityColor.r, entityColor.g, entityColor.b, entityColor.a);
+    SDL_SetRenderDrawColor(Simulation::renderer, color->r, color->g, color->b, color->a);
     SDL_RenderFillRect(Simulation::renderer, &body);
     // border
     SDL_SetRenderDrawColor(Simulation::renderer, borderColor.r, borderColor.g, borderColor.b, borderColor.a);

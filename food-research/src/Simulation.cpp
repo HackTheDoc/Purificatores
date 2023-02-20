@@ -249,8 +249,14 @@ void Simulation::NextDay() {
 void Simulation::AddEntity() {
     int x = rand() % (screen.w - Entity::size);
     int y = rand() % (screen.h - Entity::size);
-    Entity* e = new Entity(x, y);
-    entities.push_back(e);
+
+    if (rand() % 2) {
+        Runner* e = new Runner(x, y);
+        entities.push_back(e);
+    } else {
+        Walker* e = new Walker(x, y);
+        entities.push_back(e);
+    }
 }
 
 void Simulation::AddFoodSource() {

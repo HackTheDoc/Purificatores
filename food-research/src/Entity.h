@@ -3,13 +3,14 @@
 #include "Food.h"
 
 class Entity {
-private:
-    static const int speed = 4;
+protected:
+    int speed;
 
     int destinationX, destinationY;
     Food* targetedFood;
 
     SDL_Rect body;
+    const SDL_Color* color;
     int hunger;
 
 public:
