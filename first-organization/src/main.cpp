@@ -1,0 +1,44 @@
+#include <iostream>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
+#include "Simulation.h"
+
+#define SCREEN_WIDTH    2560
+#define SCREEN_HEIGHT   1440
+
+Simulation simulation;
+
+int main() {
+    const float FPS = 60;
+    const int frameDelay = 1000/FPS;
+
+    Uint32 frameStart;
+    int frameTime;
+    
+    simulation.initWindow(
+        "PURIFICATORES",
+        0, 0,                           // place window at top left corner of the screen
+        SCREEN_WIDTH, SCREEN_HEIGHT,
+        false
+    );
+    simulation.start();
+
+    while(Simulation::isRunning) {
+        frameStart = SDL_GetTicks();
+
+        simulation.handleEvents();
+        simulation.update();
+        simulation.render();
+
+        frameTime = SDL_GetTicks() - frameStart;
+
+        if (frameTime < frameDelay) {
+            SDL_Delay(frameDelay - frameTime);
+        }
+    }
+
+    simulation.kill();
+
+    return 0;
+}
