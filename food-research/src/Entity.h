@@ -4,7 +4,7 @@
 
 class Entity {
 private:
-    static const int speed = 2;
+    static const int speed = 4;
 
     int destinationX, destinationY;
     Food* targetedFood;

@@ -74,20 +74,18 @@ void Entity::eat() {
     }
 
     double dist = distance(destinationX, destinationY, body.x, body.y);
-    if (dist >= size/2) {
-        return;
-    }
-
     auto it = std::find(Simulation::foodSources.begin(), Simulation::foodSources.end(), targetedFood);
     if (it != Simulation::foodSources.end()) {
-        // let's eat !
-        hunger -= 25;
-        if (hunger < 0) hunger = 0;
+        if (dist <= size/2) {
+            // let's eat !
+            hunger -= 25;
+            if (hunger < 0) hunger = 0;
 
-        // and remove the eaten food source of the map xD
-        Simulation::foodSources.erase(it);
-        delete targetedFood;
-        targetedFood = nullptr;
+            // and remove the eaten food source of the map xD
+            Simulation::foodSources.erase(it);
+            delete targetedFood;
+            targetedFood = nullptr;
+        }
     } else {
         findNearestFoodSource();
     }
