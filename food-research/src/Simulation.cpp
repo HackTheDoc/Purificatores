@@ -201,7 +201,8 @@ void Simulation::kill() {
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
 
-    std::cout << "Final number of living entities : " << currentNumberOfEntities << std::endl;
+    std::cout << "Simulation ended on day " << day << "." << std::endl;
+    std::cout << "--------------------------------" << std::endl;
     std::cout << "Window Killed!" << std::endl;
 }
 
@@ -258,8 +259,8 @@ void Simulation::AddEntity() {
 }
 
 void Simulation::AddFoodSource() {
-    int x = rand() % (screen.w - Food::size);
-    int y = rand() % (screen.h - Food::size);
+    int x = rand() % (screen.w - Food::size * 2);
+    int y = rand() % (screen.h - Food::size * 2);
     Food* f = new Food(x, y);
     foodSources.push_back(f);
 }

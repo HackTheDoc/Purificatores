@@ -4,7 +4,7 @@
 Walker::Walker(int x, int y) : Entity(x, y) {
     color = &walkerColor;
     speed = 2;
-    hungerRisingRate = 20;
+    hungerRisingRate = 10;
 }
 
 Walker::~Walker() {}

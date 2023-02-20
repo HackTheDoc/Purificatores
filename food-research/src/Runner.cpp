@@ -4,7 +4,7 @@
 Runner::Runner(int x, int y) : Entity(x,y) {
     color = &runnerColor;
     speed = 4;
-    hungerRisingRate = 50;
+    hungerRisingRate = 30;
 }
 
 Runner::~Runner() {}

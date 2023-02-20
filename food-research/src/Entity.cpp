@@ -57,7 +57,6 @@ void Entity::findNearestFoodSource() {
     } else {
         destinationX = body.x;
         destinationY = body.y;
-        targetedFood = nullptr;
     }
 }
 
