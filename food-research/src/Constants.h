@@ -28,3 +28,5 @@ const double foodSourcesRarificationRate = 0.9;
 
 const int entityDefaultSize = 32;
 const int foodDefaultSize = 8;
+
+const int dayLength = 1000 * 5;

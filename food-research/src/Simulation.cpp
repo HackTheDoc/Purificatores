@@ -97,7 +97,7 @@ void Simulation::start() {
     dayCounterRect = {screen.w - tmpSurface->w - 16, 16, tmpSurface->w, tmpSurface->h};
     SDL_FreeSurface(tmpSurface);
 
-    nextDayTimer = SDL_AddTimer(1000*10, [](Uint32 interval, void* param) {
+    nextDayTimer = SDL_AddTimer(dayLength, [](Uint32 interval, void* param) {
         Simulation* window = static_cast<Simulation*>(param);
         window->NextDay();
         return interval;
@@ -107,8 +107,13 @@ void Simulation::start() {
 }
 
 void Simulation::update() {
-    if (isPaused || entities.size() <= 0) {
+    if (isPaused) {
         UpdateCounters();
+        return;
+    }
+
+    if (entities.size() <= 0) {
+        isRunning = false;
         return;
     }
     
